@@ -71,6 +71,8 @@ public class PatientService {
 
 
     public  Integer updatePatient(Patient patient) {
+        patient.setImc(calculateImc(patient.getHeight().doubleValue(), patient.getWeight()));
+        patient.setAge(calculateAge(patient.getBirthDate()));
         this.PATIENT_REPOSITORY.saveAndFlush(patient);
         return patient.getId();
     }
@@ -108,6 +110,9 @@ public class PatientService {
     }
 
     private boolean validateCpf(String cpf) {
+        cpf = cpf.replace(".", "");
+        cpf = cpf.replace("-", "");
+
         if (cpf == null || cpf.length() != 11 || !cpf.matches("\\d{11}")) {
             return false;
         }
