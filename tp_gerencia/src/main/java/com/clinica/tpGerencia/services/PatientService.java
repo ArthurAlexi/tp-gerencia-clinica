@@ -58,7 +58,7 @@ public class PatientService {
                 patient.getFirstName(),
                 patient.getLastName(),
                 patient.getSex(),
-                patient.getCpf(),
+                getCpfObfuscated(patient.getCpf()),
                 patient.getBirthDate(),
                 patient.getHeight().doubleValue(),
                 patient.getWeight(),
@@ -96,7 +96,7 @@ public class PatientService {
                     patient.getFirstName(),
                     patient.getLastName(),
                     patient.getSex(),
-                    patient.getCpf(),
+                    getCpfObfuscated(patient.getCpf()),
                     patient.getBirthDate(),
                     patient.getHeight().doubleValue(),
                     patient.getWeight(),
@@ -167,6 +167,12 @@ public class PatientService {
         }
 
         return 62.1 * patient.getHeight() - 44.7;
+    }
+
+    private String getCpfObfuscated(String cpf){
+        String middleDigits = cpf.substring(3, 6);
+        return "***." + middleDigits + ".***-**";
+
     }
 
 }
