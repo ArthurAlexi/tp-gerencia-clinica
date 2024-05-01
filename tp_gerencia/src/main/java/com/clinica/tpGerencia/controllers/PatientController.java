@@ -44,7 +44,7 @@ public class PatientController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deletePatient(Integer id){
-        return ResponseEntity.ok(this.PATIENT_SERVICE.deltePatient(id));
+        return ResponseEntity.ok(this.PATIENT_SERVICE.deletePatient(id));
     }
 
 }

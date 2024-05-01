@@ -1,18 +1,29 @@
 package com.clinica.tpGerencia.services;
 
 import com.clinica.tpGerencia.dtos.requests.CreatePatientDTO;
+import com.clinica.tpGerencia.dtos.responses.ReturnPatientDTO;
 import com.clinica.tpGerencia.models.Patient;
 import com.clinica.tpGerencia.repositories.PatientRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PatientService {
 
     private final PatientRepository PATIENT_REPOSITORY;
+    private final Map<Double, String> imcStatus = new HashMap<>() {{
+        put(17.0, "Very underweight");
+        put(18.49, "Under weight");
+        put(24.99, "Normal weight");
+        put(29.99, "Overweight");
+        put(34.99, "Obesity I");
+        put(39.99, "Obesity II");
+        put(40.0, "Obesity III");
+
+    }};
 
     public PatientService(PatientRepository patientRepository){
         this.PATIENT_REPOSITORY = patientRepository;
@@ -31,25 +42,40 @@ public class PatientService {
                     dto.birthDate(),
                     this.calculateAge(dto.birthDate()),
                     dto.height().shortValue(),
-                    dto.Weight(),
+                    dto.weight(),
                     dto.cpf(),
-                    this.calculateImc(dto.height(), dto.Weight())
+                    this.calculateImc(dto.height(), dto.weight())
                 );
 
         return this.PATIENT_REPOSITORY.save(newPatient);
     }
 
-    public Patient getPatientById(Integer id) {
-        return  this.PATIENT_REPOSITORY.findById(id)
+    public ReturnPatientDTO getPatientById(Integer id) {
+        Patient patient = this.PATIENT_REPOSITORY.findById(id)
                 .orElseThrow(() -> new RuntimeException("User does not exist"));
+        return new ReturnPatientDTO(
+                patient.getId(),
+                patient.getFirstName(),
+                patient.getLastName(),
+                patient.getSex(),
+                patient.getCpf(),
+                patient.getBirthDate(),
+                patient.getHeight().doubleValue(),
+                patient.getWeight(),
+                patient.getImc(),
+                getImcStatus(patient.getImc()),
+                calculateIdealWeight(patient)
+        );
     }
+
+
 
     public  Integer updatePatient(Patient patient) {
         this.PATIENT_REPOSITORY.saveAndFlush(patient);
         return patient.getId();
     }
 
-    public Integer deltePatient(Integer id) {
+    public Integer deletePatient(Integer id) {
         Patient patient = this.PATIENT_REPOSITORY.findById(id)
                 .orElseThrow(() -> new RuntimeException("User does not exist"));
 
@@ -58,8 +84,27 @@ public class PatientService {
         return patient.getId();
     }
 
-    public List<Patient> getAllPatients() {
-        return this.PATIENT_REPOSITORY.findAll();
+    public List<ReturnPatientDTO> getAllPatients() {
+        List<Patient> patients = this.PATIENT_REPOSITORY.findAll();
+        List<ReturnPatientDTO> returnPatientDTOS = new ArrayList<>();
+
+        for (Patient patient: patients) {
+            ReturnPatientDTO dto = new ReturnPatientDTO(
+                    patient.getId(),
+                    patient.getFirstName(),
+                    patient.getLastName(),
+                    patient.getSex(),
+                    patient.getCpf(),
+                    patient.getBirthDate(),
+                    patient.getHeight().doubleValue(),
+                    patient.getWeight(),
+                    patient.getImc(),
+                    getImcStatus(patient.getImc()),
+                    calculateIdealWeight(patient)
+            );
+            returnPatientDTOS.add(dto);
+        }
+        return returnPatientDTOS;
     }
 
     private boolean validateCpf(String cpf) {
@@ -101,4 +146,22 @@ public class PatientService {
 
         return weight / (height * height);
     }
+
+    private String getImcStatus(Double imc) {
+        for (Map.Entry<Double, String> entry : imcStatus.entrySet()) {
+            if (imc < entry.getKey()) {
+                return entry.getValue();
+            }
+        }
+        return "Not classified";
+    }
+
+    private Double calculateIdealWeight(Patient patient){
+        if(patient.getSex().toString().equalsIgnoreCase("m")){
+            return 72.7 * patient.getHeight() - 58;
+        }
+
+        return 62.1 * patient.getHeight() - 44.7;
+    }
+
 }

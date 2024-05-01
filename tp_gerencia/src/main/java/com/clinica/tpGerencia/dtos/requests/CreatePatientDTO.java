@@ -9,7 +9,7 @@ public record CreatePatientDTO(
        String cpf,
        LocalDate birthDate,
        Double height,
-       Double Weight
+       Double weight
 
 ) {
 }
