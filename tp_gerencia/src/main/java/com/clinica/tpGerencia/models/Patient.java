@@ -22,6 +22,8 @@ public class Patient {
 
     private String lastName;
 
+    private Character sex;
+
     private LocalDate birthDate;
 
     private Byte age;
@@ -33,6 +35,28 @@ public class Patient {
     @Column(unique = true)
     private String cpf;
 
-    private double imc;
+    private Double imc;
+
+    public Patient(
+            String firstName,
+            String lastName,
+            Character sex,
+            LocalDate birthDate,
+            Byte age,
+            Short height,
+            Double weight,
+            String cpf,
+            Double imc
+    ){
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.sex = sex;
+        this.birthDate = birthDate;
+        this.age = age;
+        this.height = height;
+        this.Weight = weight;
+        this.cpf = cpf;
+        this.imc = imc;
+    }
 
 }
