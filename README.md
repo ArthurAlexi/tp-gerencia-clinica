@@ -23,10 +23,11 @@ API para gerenciar pacientes de uma clínica médica.
 
 # Requisitos Funcionais 
 
-- [ ] Cadastrar um paciente
+- [x] Cadastrar um paciente
 - [ ] Retornar uma lista de pacientes
-- [ ] Editar um paciente
-- [ ] Deletar um paciente
+- [ ] Retornar um paciente
+- [x] Editar um paciente
+- [x] Deletar um paciente
 
 # Tecnologias Usadas
 
