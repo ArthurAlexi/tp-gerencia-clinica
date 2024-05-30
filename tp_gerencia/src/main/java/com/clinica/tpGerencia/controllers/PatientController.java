@@ -25,7 +25,7 @@ public class PatientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.PATIENT_SERVICE.createPatient(dto));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getPatientById(@PathVariable Integer id){
         return ResponseEntity.ok(this.PATIENT_SERVICE.getPatientById(id));
     }
@@ -42,8 +42,8 @@ public class PatientController {
         return ResponseEntity.status(202).body(this.PATIENT_SERVICE.updatePatient(patient));
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deletePatient(Integer id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePatient(@PathVariable Integer id){
         return ResponseEntity.ok(this.PATIENT_SERVICE.deletePatient(id));
     }
 
